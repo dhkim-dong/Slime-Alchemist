@@ -6,12 +6,23 @@ using UnityEngine.UI;
 // UI µø±‚»≠
 public class GameManager : MonoBehaviour
 {
+    public static GameManager instance;
+
     [SerializeField] Text jelatinText;
     [SerializeField] Text goldText;
 
     [SerializeField] private int testValue;
 
     public RuntimeAnimatorController[] LevelAc;
+    public int[] jellyGoldList;
+
+    public bool isSell;
+    public GameObject selectJelly;
+
+    private void Awake()
+    {
+        instance = this;
+    }
 
     public void ChangeAc(Animator anim, int level)
     {
@@ -37,4 +48,16 @@ public class GameManager : MonoBehaviour
     {
         jelatinText.text = string.Format("{0:#,###; -#,###;0}", gameData.Jelatin);
     }
+
+    #region EventTrigger for sell btn
+    public void PointEnterSellButton()
+    {
+        isSell = true;
+    }
+    
+    public void PointExitSellButton()
+    {
+        isSell = false;
+    }
+    #endregion
 }

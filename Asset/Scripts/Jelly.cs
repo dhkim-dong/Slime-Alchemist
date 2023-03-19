@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class Jelly : MonoBehaviour
 {
@@ -15,12 +17,15 @@ public class Jelly : MonoBehaviour
     [SerializeField] private Transform bottomRight;
 
     [SerializeField] private bool isBorder;
+    [SerializeField] private bool isSell;
 
     private SpriteRenderer spriteRenderer;
 
     private int id;
     private int level;
     private int exp;
+
+    private GameObject selectJelly;
 
     // 만약 젤리가 대기 상태에 진입한다면
 
@@ -148,12 +153,13 @@ public class Jelly : MonoBehaviour
 
     void OnMouseDown()
     {
-        
+        GameManager.instance.selectJelly = gameObject;
     }
 
     private void OnMouseDrag()
     {
         JellyMouseMove();
+        // 선택한 젤리의 정보를 받아오는 메소드 필요
     }
 
     private void OnMouseUp()
@@ -168,9 +174,17 @@ public class Jelly : MonoBehaviour
         }
 
         JellyState();
-
         // 판매 가능한지 체크 한 후
 
+        if (GameManager.instance.isSell)
+        {
+            // 현재 젤리의 ID를 검색한다.
+            // 젤리 ID에 해당하는 Gold text값을 가져온다.
+            // 젤리의 Level * Gold 값을 골드에 더한다.
+            // 최대 금액 조건에 부합하는지 확인한다.
+            // 젤리의 정보에 해당하는 골드를 획득
+            Destroy(GameManager.instance.selectJelly);
+        }
         // 젤리를 판매한다.( 골드를 얻는다) + 해당 오브젝트 파괴
     }
 
@@ -181,6 +195,7 @@ public class Jelly : MonoBehaviour
         mPos.z = 0;
         transform.position = mPos;
     }
+
 
     #endregion
 }
