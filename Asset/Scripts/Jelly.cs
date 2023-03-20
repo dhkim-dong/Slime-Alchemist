@@ -4,26 +4,35 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+
+[System.Serializable]
+public class JellyStat
+{
+    public string name;
+    public int id;
+    public int exp;
+}
+
 public class Jelly : MonoBehaviour
 {
     public enum State { Idle, Walk};
 
     private State state; // 젤리는 자신의 상태를 갖는다.
 
+    private JellyStat jellyStat = new JellyStat();
+
+    public JellyStat JellyStat => jellyStat;
+
     [SerializeField] private float jellySpeed;
 
     private Vector3 moveVec;
-    [SerializeField] private Transform topLeft;
-    [SerializeField] private Transform bottomRight;
+    private Transform topLeft;
+    private Transform bottomRight;
 
     [SerializeField] private bool isBorder;
     [SerializeField] private bool isSell;
 
     private SpriteRenderer spriteRenderer;
-
-    private int id;
-    private int level;
-    private int exp;
 
     private GameObject selectJelly;
 
@@ -42,6 +51,16 @@ public class Jelly : MonoBehaviour
     // 구현해야 할 기능 1. 젤리의 대기 상태
 
     // 구현해야 할 기능 2. 젤리의 걷기
+
+    // 생성될 때 topLeft 와 bottomRight를 초기화 해줘야 한다. // 2023-03-20
+    // 젤리의 데이터를 설정 해주어야 한다.
+    private void OnEnable()
+    {
+        topLeft = GameObject.FindGameObjectWithTag("TopLeft").gameObject.transform;
+        bottomRight = GameObject.FindGameObjectWithTag("BottomRight").gameObject.transform;
+
+        JellyStat.name = "테스트 이름";
+    }
 
     private void Start()
     {
@@ -183,7 +202,9 @@ public class Jelly : MonoBehaviour
             // 젤리의 Level * Gold 값을 골드에 더한다.
             // 최대 금액 조건에 부합하는지 확인한다.
             // 젤리의 정보에 해당하는 골드를 획득
+            GameManager.instance.jellyList.Remove(jellyStat);
             Destroy(GameManager.instance.selectJelly);
+            GameManager.instance.GetGold(jellyStat.id);
         }
         // 젤리를 판매한다.( 골드를 얻는다) + 해당 오브젝트 파괴
     }

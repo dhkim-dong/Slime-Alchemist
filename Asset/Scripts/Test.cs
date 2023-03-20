@@ -3,27 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Test : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler
+public class Test : MonoBehaviour
 {
-    public void OnBeginDrag(PointerEventData eventData)
-    {
-#if UNITY_EDITOR
-        Debug.Log("Begin.Drag");
-#endif
-    }
+    #region 디버그 주석
+    // Debug 001 : 싱글톤 instance 비할당 오류
 
-    public void OnDrag(PointerEventData eventData)
-    {
-       transform.position = eventData.position;
-    }
+    #endregion
 
-    public void OnDrop(PointerEventData eventData)
+    private void Update()
     {
-      
-    }
+        #region 테스트1 주석
+        // Debug 내용 instance를 할당안해서 null오류가 뜸!
 
-    public void OnEndDrag(PointerEventData eventData)
-    {
-       
-    }  
+        //if (Input.GetKeyDown(KeyCode.S))
+        //{
+        //    ButtonCall.instance.CallEventMethodByIndex(0);
+        //}
+        #endregion
+    }
 }
