@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -23,6 +24,13 @@ public class GameManager : MonoBehaviour
     public GameObject selectJelly;
 
     public List<JellyStat> jellyList = new List<JellyStat>();
+
+    public List<int> jellyIdList = new List<int>();
+
+    public bool isGroup1;
+    public bool isGroup2;
+    public bool isGroup3;
+    public bool isGroup4;
 
     private void Awake()
     {
@@ -48,6 +56,8 @@ public class GameManager : MonoBehaviour
     {
         UpdateGameResources();
         gameData.Jelatin = startJelatin;
+
+        SearchDuplicate();
     }
 
     #region 재화
@@ -100,4 +110,29 @@ public class GameManager : MonoBehaviour
         isSell = false;
     }
     #endregion
+
+    // 중복된 데이터 값 찾기
+    public void SearchDuplicate()
+    {
+        var duplicate = jellyIdList.GroupBy(i => i)
+            .Where(g => g.Count() > 2)
+            .Select(g => g.Key)
+            .ToList();
+             
+        foreach(var it in duplicate)
+        {
+            if(it == 0)
+            {
+                isGroup1 = true;
+            }
+            else if(it == 1)
+            {
+                isGroup2 = true;
+            }
+            else
+            {
+                Debug.Log("중복 id는 그외");
+            }
+        }
+    }
 }

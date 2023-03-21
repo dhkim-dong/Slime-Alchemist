@@ -203,6 +203,7 @@ public class Jelly : MonoBehaviour
             // 최대 금액 조건에 부합하는지 확인한다.
             // 젤리의 정보에 해당하는 골드를 획득
             GameManager.instance.jellyList.Remove(jellyStat);
+            GameManager.instance.jellyIdList.Remove(jellyStat.id);
             Destroy(GameManager.instance.selectJelly);
             GameManager.instance.GetGold(jellyStat.id);
         }
