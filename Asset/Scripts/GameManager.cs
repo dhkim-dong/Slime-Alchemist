@@ -27,14 +27,13 @@ public class GameManager : MonoBehaviour
 
     public List<int> jellyIdList = new List<int>();
 
-    public bool isGroup1;
-    public bool isGroup2;
-    public bool isGroup3;
-    public bool isGroup4;
+    public bool[] isGroups;
+    
 
     private void Awake()
     {
         instance = this;
+        isGroups = new bool[9];
     }
 
     // 젤리의 아이디 값(1부터 시작)을 int level 매개변수로 젤리의 진화를 표현하는 메서드
@@ -114,6 +113,8 @@ public class GameManager : MonoBehaviour
     // 중복된 데이터 값 찾기
     public void SearchDuplicate()
     {
+        if (jellyIdList == null) return;
+
         var duplicate = jellyIdList.GroupBy(i => i)
             .Where(g => g.Count() > 2)
             .Select(g => g.Key)
@@ -121,18 +122,19 @@ public class GameManager : MonoBehaviour
              
         foreach(var it in duplicate)
         {
-            if(it == 0)
+            for (int i = 0; i < duplicate.Count; i++)
             {
-                isGroup1 = true;
-            }
-            else if(it == 1)
-            {
-                isGroup2 = true;
-            }
-            else
-            {
-                Debug.Log("중복 id는 그외");
-            }
+                if(it == i)
+                {
+                    isGroups[i] = true;
+                }
+            }     
         }
     }
+
+    // isGroups[i]가 true일 때 젤리 합치기 기능
+    // isGroups[i]를 false로
+    // 해당하는 젤리 오브젝트 3개를 파괴하고
+    // 새로운 젤리를 생성한다.
+    // 또는 2개를 파괴하고 1개를 변화시킨다.
 }
