@@ -11,6 +11,7 @@ public class JellyStat
     public string name;
     public int id;
     public int exp;
+    public int level;
 }
 
 public class Jelly : MonoBehaviour
@@ -206,6 +207,7 @@ public class Jelly : MonoBehaviour
             GameManager.instance.jellyIdList.Remove(jellyStat.id);
             Destroy(GameManager.instance.selectJelly);
             GameManager.instance.GetGold(jellyStat.id);
+            GameManager.instance.SearchDuplicate();
         }
         // 젤리를 판매한다.( 골드를 얻는다) + 해당 오브젝트 파괴
     }

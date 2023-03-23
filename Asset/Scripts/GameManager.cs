@@ -27,13 +27,17 @@ public class GameManager : MonoBehaviour
 
     public List<int> jellyIdList = new List<int>();
 
-    public bool[] isGroups;
+    public List<int> jellyBoolList = new List<int>();
+
+    public bool[] level1Groups;
+    public bool[] level2Groups;
     
 
     private void Awake()
     {
         instance = this;
-        isGroups = new bool[9];
+        level1Groups = new bool[12];
+        level2Groups = new bool[12];
     }
 
     // 젤리의 아이디 값(1부터 시작)을 int level 매개변수로 젤리의 진화를 표현하는 메서드
@@ -55,8 +59,6 @@ public class GameManager : MonoBehaviour
     {
         UpdateGameResources();
         gameData.Jelatin = startJelatin;
-
-        SearchDuplicate();
     }
 
     #region 재화
@@ -111,24 +113,36 @@ public class GameManager : MonoBehaviour
     #endregion
 
     // 중복된 데이터 값 찾기
+    // 젤리가 생성되거나 파괴 될 때 메서드 실행
     public void SearchDuplicate()
     {
         if (jellyIdList == null) return;
-
+        
+        // 중복 요소 체크
         var duplicate = jellyIdList.GroupBy(i => i)
             .Where(g => g.Count() > 2)
             .Select(g => g.Key)
             .ToList();
-             
+
+        // Bool List 초기화
+        jellyBoolList.Clear();
+
+        // 중복 값 추가
         foreach(var it in duplicate)
         {
-            for (int i = 0; i < duplicate.Count; i++)
-            {
-                if(it == i)
-                {
-                    isGroups[i] = true;
-                }
-            }     
+            jellyBoolList.Add(it);
+        }
+
+        // 전부 초기화
+        for (int i = 0; i < level1Groups.Length; i++)
+        {
+            level1Groups[i] = false;
+        }
+
+        // 중복 체크
+        foreach (var a in jellyBoolList)
+        {
+            level1Groups[a] = true;
         }
     }
 
