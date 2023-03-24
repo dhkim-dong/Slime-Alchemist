@@ -51,6 +51,7 @@ public class Demo : MonoBehaviour
 
         j_statList.Add(j_stat); ;
 
+        j_stat.gameObject = makeJelly;
         j_stat.name = selectedData.description;
         j_stat.id = selectedData.id;
         j_stat.level = 1;
@@ -59,7 +60,6 @@ public class Demo : MonoBehaviour
         jellySprite = makeJelly.GetComponent<SpriteRenderer>();
         jellySprite.sprite = selectedData.icon;
 
-        GameManager.instance.jellyIdList.Add(j_stat.id); // 테스트, 중복 확인을 위한 인트 배열
         GameManager.instance.SearchDuplicate();
     }
 }

@@ -8,6 +8,7 @@ using UnityEngine.UI;
 [System.Serializable]
 public class JellyStat
 {
+    public GameObject gameObject;
     public string name;
     public int id;
     public int exp;
@@ -204,9 +205,9 @@ public class Jelly : MonoBehaviour
             // 최대 금액 조건에 부합하는지 확인한다.
             // 젤리의 정보에 해당하는 골드를 획득
             GameManager.instance.jellyList.Remove(jellyStat);
-            GameManager.instance.jellyIdList.Remove(jellyStat.id);
+            //GameManager.instance.jellyIdList.Remove(jellyStat.id);
             Destroy(GameManager.instance.selectJelly);
-            GameManager.instance.GetGold(jellyStat.id);
+            GameManager.instance.GetGold(jellyStat);
             GameManager.instance.SearchDuplicate();
         }
         // 젤리를 판매한다.( 골드를 얻는다) + 해당 오브젝트 파괴

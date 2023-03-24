@@ -24,25 +24,10 @@ public class Test : MonoBehaviour
         #endregion
     }
 
-    // 테스트 2 
-
+    // 테스트 2 : 코드 간결화를 위해 반복을 쓰고 싶다. 반복문에서 생성된 데이터를 자료구조를 담는 리스트형으로 만들어서 쓰기? 구현해볼 것 = 리스트를 리스트로 가지는
+    // ex) List<List<int>> doubleList = new List<List<int>>();
     private void Start()
     {
-        PrintScriptableObject();
+     
     }
-
-    Dictionary<string, string> strings = new Dictionary<string, string>();
-
-    private void PrintScriptableObject()
-    {
-        strings.Add("00001", "가위");
-        strings.Add("00002", "바위");
-        strings.Add("00003", "보");
-        strings.Add("00004", "하늘");
-        strings.Add("00005", "구름");
-        strings.Add("00006", "바람");
-        strings.Add("00007", "태양");
-        strings.Add("00008", "달");
-        strings.Add("00009", "지구");
-    } 
 }

@@ -29,10 +29,6 @@ public class ButtonEvent : MonoBehaviour
         {
             buttonIndex = 1;
         }
-        else if(buttonName == "sell")
-        {
-            buttonIndex = 2;
-        }
         else
         {
 #if UNITY_EDITOR
@@ -43,6 +39,7 @@ public class ButtonEvent : MonoBehaviour
 
     private void OnButtonClick()
     {
+        ButtonCall.instance.PanelReset();
         CallButtonEvent();
     }
 
@@ -54,12 +51,16 @@ public class ButtonEvent : MonoBehaviour
                 ButtonCall.instance.CallEventMethodByIndex(buttonIndex);
                 break;
             case 1:
-                Debug.Log("upgrade");
+                ButtonCall.instance.CallEventMethodByIndex(buttonIndex);
                 break;
-             case 2:
+            case 2:
                 Debug.Log("sell");
                 break;
-
+            //case 3:
+            //    ButtonCall.instance.ExitEventMethodByIndex(buttonIndex);
+            //    break;
+            default:
+                break;
         }
     }
 }

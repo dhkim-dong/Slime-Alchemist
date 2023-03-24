@@ -25,13 +25,11 @@ public class GameManager : MonoBehaviour
 
     public List<JellyStat> jellyList = new List<JellyStat>();
 
-    public List<int> jellyIdList = new List<int>();
-
     public List<int> jellyBoolList = new List<int>();
+    public List<int> jellyBool2List = new List<int>();
 
     public bool[] level1Groups;
     public bool[] level2Groups;
-    
 
     private void Awake()
     {
@@ -65,9 +63,10 @@ public class GameManager : MonoBehaviour
 
     // 골드 획득
 
-    public void GetGold(int id)
+    public void GetGold(JellyStat stat)
     {
-        gameData.Gold += jellyGoldList[id];
+        int totGold = jellyGoldList[stat.id] * stat.level;
+        gameData.Gold += totGold;
     }
 
     // 젤라틴 획득
@@ -114,41 +113,115 @@ public class GameManager : MonoBehaviour
 
     // 중복된 데이터 값 찾기
     // 젤리가 생성되거나 파괴 될 때 메서드 실행
+
     public void SearchDuplicate()
     {
-        if (jellyIdList == null) return;
-        
-        // 중복 요소 체크
-        var duplicate = jellyIdList.GroupBy(i => i)
-            .Where(g => g.Count() > 2)
-            .Select(g => g.Key)
-            .ToList();
+        if (jellyList == null) return;
 
         // Bool List 초기화
         jellyBoolList.Clear();
+        jellyBool2List.Clear();
+
+        var same = jellyList.FindAll(i => i.level == 1);
+        var duplicate = same.GroupBy(i => i.id)
+        .Where(g => g.Count() > 2)
+        .Select(g => g.Key)
+        .ToList();
+
+        var same2 = jellyList.FindAll(i => i.level == 2);
+        var duplicate2 = same2.GroupBy(i => i.id)
+        .Where(g => g.Count() > 2)
+        .Select(g => g.Key)
+        .ToList();
 
         // 중복 값 추가
-        foreach(var it in duplicate)
+        foreach (var it in duplicate)
         {
             jellyBoolList.Add(it);
         }
 
-        // 전부 초기화
+        foreach (var it in duplicate2)
+        {
+            jellyBool2List.Add(it);
+        }
+
+        // level 1 그룹 초기화
         for (int i = 0; i < level1Groups.Length; i++)
         {
             level1Groups[i] = false;
         }
 
-        // 중복 체크
+        // level 2 그룹 초기화
+        for (int i = 0; i < level2Groups.Length; i++)
+        {
+            level2Groups[i] = false;
+        }
+
+        // level 1 중복 체크
         foreach (var a in jellyBoolList)
         {
             level1Groups[a] = true;
         }
+
+
+        // level 2 중복 체크
+        foreach (var a in jellyBool2List)
+        {
+            level2Groups[a] = true;
+        }
     }
+
+
+    // 중복 체크를 위해 만든 jellyidList를 제거하여 하나로 통일
+    //public void SearchDuplicate()
+    //{
+    //    if (jellyIdList == null) return;
+
+    //    // 중복 요소 체크
+    //    var duplicate = jellyIdList.GroupBy(i => i)
+    //        .Where(g => g.Count() > 2)
+    //        .Select(g => g.Key)
+    //        .ToList();
+
+    //    // Bool List 초기화
+    //    jellyBoolList.Clear();
+
+    //    // 중복 값 추가
+    //    foreach(var it in duplicate)
+    //    {
+    //        jellyBoolList.Add(it);
+    //    }
+
+    //    // 전부 초기화
+    //    for (int i = 0; i < level1Groups.Length; i++)
+    //    {
+    //        level1Groups[i] = false;
+    //    }
+
+    //    // 중복 체크
+    //    foreach (var a in jellyBoolList)
+    //    {
+    //        level1Groups[a] = true;
+    //    }
+    //}
 
     // isGroups[i]가 true일 때 젤리 합치기 기능
     // isGroups[i]를 false로
     // 해당하는 젤리 오브젝트 3개를 파괴하고
     // 새로운 젤리를 생성한다.
     // 또는 2개를 파괴하고 1개를 변화시킨다.
+
+    //2023-03-24 할일 => JellyIdList 없애고 jellyList로 통합 관리 하기
+
+    // 콘솔 커맨드 만들기 => 테스트를 위한 2레벨, 3레벨 젤리 생성하기
+
+#if UNITY_EDITOR
+    private void OnGUI()
+    {
+        if(GUI.Button(new Rect(0, 0, 100, 50), "Level2 Jelly"))
+        {
+            UpgradePanelView.target();
+        };
+    }
 }
+#endif

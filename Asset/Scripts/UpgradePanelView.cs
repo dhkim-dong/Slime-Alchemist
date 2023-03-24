@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,22 +6,12 @@ using UnityEngine.UI;
 
 public class UpgradePanelView : MonoBehaviour
 {
+    public static Action target;
+
     [SerializeField] private Sprite[] jellySprites;
     [SerializeField] private Image curJellyImage;
 
     private int currentPanelIndex = 0;
-    const int JELLY_0 = 0;
-    const int JELLY_1 = 1;
-    const int JELLY_2 = 2;
-    const int JELLY_3 = 3;
-    const int JELLY_4 = 4;
-    const int JELLY_5 = 5;
-    const int JELLY_6 = 6;
-    const int JELLY_7 = 7;
-    const int JELLY_8 = 8;
-    const int JELLY_9 = 9;
-    const int JELLY_10 = 10;
-    const int JELLY_11 = 11;
     const int MAX_JELLY_INDEX = 11;
 
     [SerializeField] private GameObject jelly;
@@ -28,13 +19,19 @@ public class UpgradePanelView : MonoBehaviour
     [SerializeField] private Button level3Btn;
 
     private JellyStat jellyStat;
-    private JellyStat curStat;
+    private JellyStat defaultStat;
+
+    private Animator jellyAC;
 
     private List<JellyStat> j_statList = new List<JellyStat>();
 
+    private List<GameObject> jellyList = new List<GameObject>();
+
     private void Awake()
     {
-        curStat= new JellyStat();
+        target = () => { TestJellyMake(); };
+
+        defaultStat= new JellyStat();
         level2Btn.interactable = false;
         level3Btn.interactable = false;
     }
@@ -47,71 +44,72 @@ public class UpgradePanelView : MonoBehaviour
     private void Update()
     {
         CheckEnableButton();
+        CheckEnable2Button();
     }
 
     private void SetJellyPanelStat()
     {
         switch (currentPanelIndex)
         {
-            case JELLY_0:
-                curStat.id = 0;
-                curStat.level = 1;
-                curStat.name = "1단계";
+            case 0:
+                defaultStat.id = 0;
+                defaultStat.level = 1;
+                defaultStat.name = "1단계";
                 break;
-            case JELLY_1:
-                curStat.id = 1;
-                curStat.level = 1;
-                curStat.name = "2단계";
+            case 1:
+                defaultStat.id = 1;
+                defaultStat.level = 1;
+                defaultStat.name = "2단계";
                 break;
-            case JELLY_2:
-                curStat.id = 2;
-                curStat.level = 1;
-                curStat.name = "3단계";
+            case 2:
+                defaultStat.id = 2;
+                defaultStat.level = 1;
+                defaultStat.name = "3단계";
                 break;
-            case JELLY_3:
-                curStat.id = 3;
-                curStat.level = 1;
-                curStat.name = "3단계";
+            case 3:
+                defaultStat.id = 3;
+                defaultStat.level = 1;
+                defaultStat.name = "3단계";
                 break;
-            case JELLY_4:
-                curStat.id = 4;
-                curStat.level = 1;
-                curStat.name = "4단계";
+            case 4:
+                defaultStat.id = 4;
+                defaultStat.level = 1;
+                defaultStat.name = "4단계";
                 break;
-            case JELLY_5:
-                curStat.id = 5;
-                curStat.level = 1;
-                curStat.name = "5단계";
+            case 5:
+                defaultStat.id = 5;
+                defaultStat.level = 1;
+                defaultStat.name = "5단계";
                 break;
-            case JELLY_6:
-                curStat.id = 6;
-                curStat.level = 1;
-                curStat.name = "6단계";
+            case 6:
+                defaultStat.id = 6;
+                defaultStat.level = 1;
+                defaultStat.name = "6단계";
                 break;
-            case JELLY_7:
-                curStat.id = 7;
-                curStat.level = 1;
-                curStat.name = "7단계";
+            case 7:
+                defaultStat.id = 7;
+                defaultStat.level = 1;
+                defaultStat.name = "7단계";
                 break;
-            case JELLY_8:
-                curStat.id = 8;
-                curStat.level = 1;
-                curStat.name = "8단계";
+            case 8:
+                defaultStat.id = 8;
+                defaultStat.level = 1;
+                defaultStat.name = "8단계";
                 break;
-            case JELLY_9:
-                curStat.id = 9;
-                curStat.level = 1;
-                curStat.name = "9단계";
+            case 9:
+                defaultStat.id = 9;
+                defaultStat.level = 1;
+                defaultStat.name = "9단계";
                 break;
-            case JELLY_10:
-                curStat.id = 10;
-                curStat.level = 1;
-                curStat.name = "10단계";
+            case 10:
+                defaultStat.id = 10;
+                defaultStat.level = 1;
+                defaultStat.name = "10단계";
                 break;
-            case JELLY_11:
-                curStat.id = 11;
-                curStat.level = 1;
-                curStat.name = "11단계";
+            case 11:
+                defaultStat.id = 11;
+                defaultStat.level = 1;
+                defaultStat.name = "11단계";
                 break;
         }
     }
@@ -126,6 +124,18 @@ public class UpgradePanelView : MonoBehaviour
         {
             level2Btn.interactable = false;
         } 
+    }
+
+    private void CheckEnable2Button()
+    {
+        if (GameManager.instance.level2Groups[currentPanelIndex])
+        {
+            level3Btn.interactable = true;
+        }
+        else
+        {
+            level3Btn.interactable = false;
+        }
     }
 
     private void SetJellySprite()
@@ -157,16 +167,99 @@ public class UpgradePanelView : MonoBehaviour
         SetJellySprite();
     }
 
+    // 2023.03.24 작업 시작
+    // 생성된 1레벨 젤리를 파괴해야 하는데 정보를 갖고 오지 못한다.
+    // 젤리 데이터를 레벨 별로 관리한다?
+    // 또는 게임 매니저의 jellyList의 id가 curPanelIndex와 같은 오브젝트를 검사한다.
+
+    private void FindSameJelly(int findlevel)
+    {
+        var obj = GameManager.instance.jellyList.FindAll(a =>  a.id== currentPanelIndex);
+        var obj2 = obj.FindAll(a => a.level == findlevel);
+
+        List<GameObject> sameJellys = new List<GameObject>();
+
+        foreach(var it in obj2)
+        {
+            sameJellys.Add(it.gameObject);
+        }
+
+        for (int i = 0; i < 3; i++)
+        {
+            sameJellys[i].SetActive(false);
+            GameManager.instance.jellyList.Remove(sameJellys[i].GetComponent<Jelly>().JellyStat); 
+        }
+    }
+
+    // 리스트 제거하고 Act 적용 작업할 것
+    // 두 메서드의 유사한 부분이 많으니 이 부분을 하나로 합칠 방법을 생각해보기
+    // 2023-03-25 작업예정
     public void GenerateSecondLevelJelly()
     {
+        FindSameJelly(1);
+
         GameObject makeJelly = Instantiate(jelly, new Vector3(0, 0, 0), Quaternion.identity);
+
+        jellyAC = makeJelly.GetComponent<Animator>();
 
         jellyStat = makeJelly.GetComponent<Jelly>().JellyStat;
 
-        j_statList.Add(jellyStat); ;
+        jellyStat.gameObject = makeJelly;
+        jellyStat.name = defaultStat.name;
+        jellyStat.id = defaultStat.id;
+        jellyStat.level = defaultStat.level + 1;
 
-        jellyStat.name = curStat.name;
-        jellyStat.id = curStat.id;
-        jellyStat.level = curStat.level + 1;
+        GameManager.instance.jellyList.Add(jellyStat);
+
+        jellyAC.runtimeAnimatorController = GameManager.instance.LevelAc[1];
+        SpriteRenderer jellySprite = makeJelly.gameObject.GetComponent<SpriteRenderer>();
+        jellySprite.sprite = jellySprites[currentPanelIndex];
+
+        GameManager.instance.SearchDuplicate();
+    }
+
+    public void GenerateThirdLevelJelly()
+    {
+        FindSameJelly(2);
+
+        GameObject makeJelly = Instantiate(jelly, new Vector3(0, 0, 0), Quaternion.identity);
+
+        jellyAC = makeJelly.GetComponent<Animator>();
+
+        jellyStat = makeJelly.GetComponent<Jelly>().JellyStat;
+
+        jellyStat.gameObject = makeJelly;
+        jellyStat.name = defaultStat.name;
+        jellyStat.id = defaultStat.id;
+        jellyStat.level = defaultStat.level + 2;
+
+        GameManager.instance.jellyList.Add(jellyStat);
+
+        jellyAC.runtimeAnimatorController = GameManager.instance.LevelAc[2];
+        SpriteRenderer jellySprite = makeJelly.gameObject.GetComponent<SpriteRenderer>();
+        jellySprite.sprite = jellySprites[currentPanelIndex];
+
+        GameManager.instance.SearchDuplicate();
+    }
+
+    private void TestJellyMake()
+    {
+        GameObject makeJelly = Instantiate(jelly, new Vector3(0, 0, 0), Quaternion.identity);
+
+        jellyAC = makeJelly.GetComponent<Animator>();
+
+        jellyStat = makeJelly.GetComponent<Jelly>().JellyStat;
+
+        jellyStat.gameObject = makeJelly;
+        jellyStat.name = defaultStat.name;
+        jellyStat.id = defaultStat.id;
+        jellyStat.level = defaultStat.level + 1;
+
+        GameManager.instance.jellyList.Add(jellyStat);
+
+        jellyAC.runtimeAnimatorController = GameManager.instance.LevelAc[1];
+        SpriteRenderer jellySprite = makeJelly.gameObject.GetComponent<SpriteRenderer>();
+        jellySprite.sprite = jellySprites[currentPanelIndex];
+        GameManager.instance.SearchDuplicate();
     }
 }
