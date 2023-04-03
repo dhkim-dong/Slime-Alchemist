@@ -8,7 +8,6 @@ public class Demo : MonoBehaviour
     [SerializeField] private Roulette roulette;
     [SerializeField] Button buttonSpin;
     [SerializeField] private GameObject jelly;
-    [SerializeField] private int rouletteCost;
 
     private SpriteRenderer jellySprite;
     private JellyStat j_stat;
@@ -21,7 +20,7 @@ public class Demo : MonoBehaviour
         {
             buttonSpin.interactable = false;
 
-            GameManager.instance.UseGold(rouletteCost);
+            GameManager.instance.UseGold(GameManager.instance.rouletteCost);
             if (GameManager.instance.canBuy)
             {
                 roulette.Spin(EndOfSpin);

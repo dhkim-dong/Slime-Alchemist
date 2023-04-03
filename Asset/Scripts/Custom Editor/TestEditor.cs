@@ -1,10 +1,24 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
+public class ExampleClass
+{
+    public string Name { get; set; }
+    public int Age { get; set; }
+    public string Address { get; set; }
+}
+
+// Float 나 Int값을 연결 시켜주는 컨테이너 박스를 생성
+// editor에서 컨테이너 박스의 값을 조절하면 해당 컨테이너가 원하는 값을 전달해주는 방식
+
 public class TestEditor : EditorWindow
 {
+    private List<ExampleClass> examples = new List<ExampleClass>();
+    private ExampleClass selectedExampleClass;
+
     [MenuItem("Window/TestEdit")]
     static void Open()
     {
@@ -13,9 +27,17 @@ public class TestEditor : EditorWindow
 
     int selected;
 
-    Object selectedObject = null;
+    int buyCost;
 
-    string buyCost;
+    int costIncrement;
+
+    int selectJellyNum;
+    int selectJellyLevel;
+
+    string insertValue;
+
+    Transform[] Container;
+
 
     private void OnEnable()
     {
@@ -30,19 +52,66 @@ public class TestEditor : EditorWindow
 
         EditorGUILayout.Space(10);
 
+        costIncrement = EditorGUILayout.IntSlider(costIncrement,0,90);
+
         EditorGUILayout.BeginHorizontal();
 
         GUILayout.Label("Purchase Cost");
 
-        EditorGUILayout.TextArea(buyCost);
+        EditorGUILayout.LabelField(buyCost.ToString());
 
         EditorGUILayout.EndHorizontal();
 
-        selectedObject = EditorGUILayout.ObjectField("General Value", selectedObject, typeof(GameManager), true);
+
+        if(GUILayout.Button("Purchase Cost Up"))
+        {
+            buyCost += costIncrement;
+            GameManager.instance.rouletteCost = buyCost;
+        }
+
+        if(GUILayout.Button("Purchase Cost Down"))
+        {
+            buyCost -= costIncrement;
+            GameManager.instance.rouletteCost = buyCost;
+        }
+
+        EditorGUILayout.Space(20);
+
+        EditorGUILayout.BeginHorizontal();
+
+        EditorGUILayout.LabelField("젤리 선택 넘버");
+
+        selectJellyNum = EditorGUILayout.IntField(selectJellyNum);
+
+        EditorGUILayout.EndHorizontal();
+
+        //
+
+        EditorGUILayout.BeginHorizontal();
+
+        EditorGUILayout.LabelField("젤리 레벨");
+
+        selectJellyLevel = EditorGUILayout.IntField(selectJellyLevel);
+
+        EditorGUILayout.EndHorizontal();
+
+        if (GUILayout.Button("젤리 생성"))
+        {
+            ButtonCall.instance.CallEventMethodByIndex(1);
+
+            if (selectJellyNum < 0) return;
+            if (selectJellyNum > 11) return;
+
+            if (selectJellyLevel < 0) return;
+            if (selectJellyLevel > 3) return;
+
+            UpgradePanelView.editJellyTarget(selectJellyNum,selectJellyLevel);
+            UpgradePanelView.target();
+        }
     }
 
     private void UpdateEditorString()
     {
-        buyCost = "150";
+        buyCost = 150;
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -31,11 +32,15 @@ public class GameManager : MonoBehaviour
     public bool[] level1Groups;
     public bool[] level2Groups;
 
+    public int rouletteCost;
+
     private void Awake()
     {
         instance = this;
         level1Groups = new bool[12];
         level2Groups = new bool[12];
+
+        DataContainer.instance.SetDataList(rouletteCost);
     }
 
     // 젤리의 아이디 값(1부터 시작)을 int level 매개변수로 젤리의 진화를 표현하는 메서드
@@ -218,10 +223,14 @@ public class GameManager : MonoBehaviour
 #if UNITY_EDITOR
     private void OnGUI()
     {
-        if(GUI.Button(new Rect(0, 0, 100, 50), "Level2 Jelly"))
-        {
-            UpgradePanelView.target();
-        };
+        GUI.Box(new Rect(0, 20, 30, 30), "GAMEINFO");
+
+        GUI.TextArea(new Rect(10, 40, 200, 20), "룰렛 가격 :    " + rouletteCost.ToString());
+
+        //if(GUILayout.Button("젤리 생성"))
+        //{
+        //    UpgradePanelView.target();
+        //}
     }
 }
 #endif

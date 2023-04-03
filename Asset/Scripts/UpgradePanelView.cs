@@ -7,11 +7,13 @@ using UnityEngine.UI;
 public class UpgradePanelView : MonoBehaviour
 {
     public static Action target;
+    public static Action<int, int> editJellyTarget;
 
     [SerializeField] private Sprite[] jellySprites;
     [SerializeField] private Image curJellyImage;
 
     private int currentPanelIndex = 0;
+
     const int MAX_JELLY_INDEX = 11;
 
     [SerializeField] private GameObject jelly;
@@ -20,6 +22,7 @@ public class UpgradePanelView : MonoBehaviour
 
     private JellyStat jellyStat;
     private JellyStat defaultStat;
+    private JellyStat selectStat;
 
     private Animator jellyAC;
 
@@ -30,8 +33,10 @@ public class UpgradePanelView : MonoBehaviour
     private void Awake()
     {
         target = () => { TestJellyMake(); };
+        editJellyTarget = (int value, int level) => { SelectJellyStat(value, level); };
 
-        defaultStat= new JellyStat();
+        defaultStat = new JellyStat();
+        selectStat = new JellyStat();
         level2Btn.interactable = false;
         level3Btn.interactable = false;
     }
@@ -110,6 +115,73 @@ public class UpgradePanelView : MonoBehaviour
                 defaultStat.id = 11;
                 defaultStat.level = 1;
                 defaultStat.name = "11단계";
+                break;
+        }
+    }
+
+    private void SelectJellyStat(int selectJellyIndex, int jellyLevel)
+    {
+        switch (selectJellyIndex)
+        {
+            case 0:
+                selectStat.id = 0;
+                selectStat.level = jellyLevel;
+                selectStat.name = "1단계";
+                break;
+            case 1:
+                selectStat.id = 1;
+                selectStat.level = jellyLevel;
+                selectStat.name = "2단계";
+                break;
+            case 2:
+                selectStat.id = 2;
+                selectStat.level = jellyLevel;
+                selectStat.name = "3단계";
+                break;
+            case 3:
+                selectStat.id = 3;
+                selectStat.level = jellyLevel;
+                selectStat.name = "3단계";
+                break;
+            case 4:
+                selectStat.id = 4;
+                selectStat.level = jellyLevel;
+                selectStat.name = "4단계";
+                break;
+            case 5:
+                selectStat.id = 5;
+                selectStat.level = jellyLevel;
+                selectStat.name = "5단계";
+                break;
+            case 6:
+                selectStat.id = 6;
+                selectStat.level = jellyLevel;
+                selectStat.name = "6단계";
+                break;
+            case 7:
+                selectStat.id = 7;
+                selectStat.level = jellyLevel;
+                selectStat.name = "7단계";
+                break;
+            case 8:
+                selectStat.id = 8;
+                selectStat.level = jellyLevel;
+                selectStat.name = "8단계";
+                break;
+            case 9:
+                selectStat.id = 9;
+                selectStat.level = jellyLevel;
+                selectStat.name = "9단계";
+                break;
+            case 10:
+                selectStat.id = 10;
+                selectStat.level = jellyLevel;
+                selectStat.name = "10단계";
+                break;
+            case 11:
+                selectStat.id = 11;
+                selectStat.level = jellyLevel;
+                selectStat.name = "11단계";
                 break;
         }
     }
@@ -251,15 +323,17 @@ public class UpgradePanelView : MonoBehaviour
         jellyStat = makeJelly.GetComponent<Jelly>().JellyStat;
 
         jellyStat.gameObject = makeJelly;
-        jellyStat.name = defaultStat.name;
-        jellyStat.id = defaultStat.id;
-        jellyStat.level = defaultStat.level + 1;
+        jellyStat.name = selectStat.name;
+        jellyStat.id = selectStat.id;
+        jellyStat.level = selectStat.level;
 
         GameManager.instance.jellyList.Add(jellyStat);
 
-        jellyAC.runtimeAnimatorController = GameManager.instance.LevelAc[1];
+        jellyAC.runtimeAnimatorController = GameManager.instance.LevelAc[jellyStat.level - 1];
         SpriteRenderer jellySprite = makeJelly.gameObject.GetComponent<SpriteRenderer>();
-        jellySprite.sprite = jellySprites[currentPanelIndex];
+        jellySprite.sprite = jellySprites[jellyStat.id];
         GameManager.instance.SearchDuplicate();
     }
+
+
 }
