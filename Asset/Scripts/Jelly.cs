@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -38,6 +39,8 @@ public class Jelly : MonoBehaviour
 
     private GameObject selectJelly;
 
+    private float makeJelatinTime;
+
     // 만약 젤리가 대기 상태에 진입한다면
 
     // 랜덤한 시간 동안 '대기'하는 기능이 필요하다. 
@@ -68,16 +71,24 @@ public class Jelly : MonoBehaviour
     {
         JellyState();
         spriteRenderer= GetComponent<SpriteRenderer>();
+
+        makeJelatinTime = 1f;
+        MakeJellyJelatin();
     }
 
     private void Update()
     {
         CheckBorder();
         ReturnJellyPos();
-        transform.Translate(moveVec.normalized * jellySpeed * Time.deltaTime);
+        JellyAutoMove();
     }
 
     #region 젤리 이동
+    private void JellyAutoMove()
+    {
+        transform.Translate(moveVec.normalized * jellySpeed * Time.deltaTime);
+    }
+
     void JellyState()
     {
         switch (state)
@@ -169,6 +180,18 @@ public class Jelly : MonoBehaviour
     }
     #endregion
 
+    #region 젤라틴 생산
+    private void MakeJellyJelatin()
+    {      
+        int makeJelatin = 0;
+
+        makeJelatin = (int)(GameManager.instance.jelatinList[jellyStat.id] * Math.Pow(10, JellyStat.level - 1));
+
+        GameManager.instance.jellyJelatin += makeJelatin;
+
+        Invoke("MakeJellyJelatin",makeJelatinTime);
+    }
+    #endregion
 
     #region 마우스 이벤트
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,14 +13,25 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] Text jelatinText;
     [SerializeField] Text goldText;
+    [SerializeField] Text timeText;
+    [SerializeField] Text missionJelatinText;
+    [SerializeField] Text missionRemainTime;
 
     [SerializeField] private int startGold;
     [SerializeField] private int startJelatin;
+    [SerializeField] GameObject gameOverPanel;
 
     public RuntimeAnimatorController[] LevelAc;
     public int[] jellyGoldList;
     public int[] jelatinList;
+    public int[] missionTimeList;
+    public int[] missionList;
+    private int missionNum;
 
+    static float TIMEVALUE = 60 * 10;
+    private float missionCheckTime = 0;
+
+    public bool checkMission = false;
     public bool isSell;
     public bool canBuy;
     public GameObject selectJelly;
@@ -33,14 +45,14 @@ public class GameManager : MonoBehaviour
     public bool[] level2Groups;
 
     public int rouletteCost;
+    public int jellyJelatin;
+    
 
     private void Awake()
     {
         instance = this;
         level1Groups = new bool[12];
-        level2Groups = new bool[12];
-
-        DataContainer.instance.SetDataList(rouletteCost);
+        level2Groups = new bool[12];     
     }
 
     // 젤리의 아이디 값(1부터 시작)을 int level 매개변수로 젤리의 진화를 표현하는 메서드
@@ -49,19 +61,27 @@ public class GameManager : MonoBehaviour
         anim.runtimeAnimatorController = LevelAc[level - 1];
     }
 
-    private GameData gameData;
+    public GameData gameData;
 
     private void Start()
     {
+        rouletteCost = 150;
+        missionNum = 0;
+
+        DataContainer.instance.SetDataList(rouletteCost);
+
         gameData = new GameData();
         gameData.Jelatin = 10;
         gameData.Gold = startGold;
+        gameData.Jelatin = startJelatin;
+        jellyJelatin = startJelatin;
     }
 
     private void Update()
     {
-        UpdateGameResources();
-        gameData.Jelatin = startJelatin;
+        TimeFlow();
+        UpdateResource();
+        UpdateGameUI();
     }
 
     #region 재화
@@ -97,13 +117,48 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
-    // 젤라틴과 골드 UI 갱신
-    private void UpdateGameResources()
+    #region 시간
+
+    public void TimeFlow()
     {
-        jelatinText.text = string.Format("{0:#,###; -#,###;0}", gameData.Jelatin);
-        goldText.text = string.Format("{0:#,###; -#,###;0}", gameData.Gold);
+        TIMEVALUE -= Time.deltaTime;
+        missionCheckTime += Time.deltaTime;
+
+        if(missionCheckTime > missionTimeList[missionNum])
+        {
+            if(!ButtonCall.instance.isMission)
+            ButtonCall.instance.CallEventMethodByIndex(2);
+            checkMission = true;
+            missionCheckTime = 0;
+            GetMission();
+        }
     }
 
+    #endregion
+
+    // 젤라틴과 골드 UI 갱신
+
+    private void UpdateResource()
+    {
+        gameData.Jelatin = jellyJelatin;
+    }
+
+    private void UpdateGameUI()
+    {           
+        jelatinText.text = string.Format("{0:#,###; -#,###;0}", gameData.Jelatin);        
+        goldText.text = string.Format("{0:#,###; -#,###;0}", gameData.Gold);
+
+        int h = (int)TIMEVALUE / 3600;
+        int m = (int)((TIMEVALUE / 60 % 60));
+        int s = (int)(TIMEVALUE % 60);
+        timeText.text = string.Format("{0:D2} : {1:D2} : {2:D2}", h, m, s);
+
+        if (ButtonCall.instance.isMission)
+        {
+            missionRemainTime.text = string.Format("남은시간 : " + "{0:D2}", (int)((float)missionTimeList[missionNum] - missionCheckTime));
+        }
+    }
+ 
     #region EventTrigger for sell btn
     public void PointEnterSellButton()
     {
@@ -115,9 +170,6 @@ public class GameManager : MonoBehaviour
         isSell = false;
     }
     #endregion
-
-    // 중복된 데이터 값 찾기
-    // 젤리가 생성되거나 파괴 될 때 메서드 실행
 
     public void SearchDuplicate()
     {
@@ -176,7 +228,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
+    #region 주석
     // 중복 체크를 위해 만든 jellyidList를 제거하여 하나로 통일
     //public void SearchDuplicate()
     //{
@@ -219,13 +271,34 @@ public class GameManager : MonoBehaviour
     //2023-03-24 할일 => JellyIdList 없애고 jellyList로 통합 관리 하기
 
     // 콘솔 커맨드 만들기 => 테스트를 위한 2레벨, 3레벨 젤리 생성하기
+    #endregion
+
+    private void GetMission()
+    {
+        if (!checkMission) return;
+
+        if(gameData.Jelatin < missionList[missionNum])
+        {
+            Time.timeScale = 0f;
+            gameOverPanel.SetActive(true);
+            // 게임오버
+        }
+        else
+        {           
+
+            jellyJelatin -= missionList[missionNum];
+            missionNum++;
+            missionJelatinText.text = string.Format("젤라틴 : " + "{0:#,###; -#,###;0}", missionList[missionNum]);
+            checkMission = false;
+        }
+    }
 
 #if UNITY_EDITOR
     private void OnGUI()
     {
-        GUI.Box(new Rect(0, 20, 30, 30), "GAMEINFO");
+        //GUI.Box(new Rect(0, 20, 30, 30), "GAMEINFO");
 
-        GUI.TextArea(new Rect(10, 40, 200, 20), "룰렛 가격 :    " + rouletteCost.ToString());
+        //GUI.TextArea(new Rect(10, 40, 200, 20), "룰렛 가격 :    " + rouletteCost.ToString());
 
         //if(GUILayout.Button("젤리 생성"))
         //{

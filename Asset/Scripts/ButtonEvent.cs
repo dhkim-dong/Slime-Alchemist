@@ -29,6 +29,10 @@ public class ButtonEvent : MonoBehaviour
         {
             buttonIndex = 1;
         }
+        else if(buttonName == "mission")
+        {
+            buttonIndex = 2;
+        }
         else
         {
 #if UNITY_EDITOR
@@ -54,7 +58,7 @@ public class ButtonEvent : MonoBehaviour
                 ButtonCall.instance.CallEventMethodByIndex(buttonIndex);
                 break;
             case 2:
-                Debug.Log("sell");
+                ButtonCall.instance.CallEventMethodByIndex(buttonIndex);
                 break;
             //case 3:
             //    ButtonCall.instance.ExitEventMethodByIndex(buttonIndex);

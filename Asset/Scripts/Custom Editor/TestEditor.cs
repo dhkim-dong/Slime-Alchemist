@@ -27,7 +27,7 @@ public class TestEditor : EditorWindow
 
     int selected;
 
-    int buyCost;
+    int buyCost = GameManager.instance.rouletteCost;
 
     int costIncrement;
 

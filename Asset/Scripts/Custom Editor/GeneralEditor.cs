@@ -16,6 +16,8 @@ public class GeneralEditor : EditorWindow
 
 	int costIncrement;
 
+	public CustomGameObjectInspector settings;
+
     void OnGUI ()
 	{
 		if (EditorApplication.isPlaying)
