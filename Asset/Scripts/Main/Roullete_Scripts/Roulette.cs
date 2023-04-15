@@ -114,8 +114,9 @@ public class Roulette : MonoBehaviour
     {
         float current = 0;
         float percent = 0;
+        GameManager.instance.isRoulette = true;
 
-        while(percent < 1)
+        while (percent < 1)
         {
             current += Time.deltaTime;
             percent = current / spinDuration;
@@ -126,6 +127,7 @@ public class Roulette : MonoBehaviour
             yield return null;
         }
 
+        GameManager.instance.isRoulette = false;
         isSpinning = false;
 
         if (action != null) action.Invoke(roulettePieceData[selectedIndex]);

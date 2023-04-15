@@ -14,6 +14,13 @@ public class Demo : MonoBehaviour
 
     private List<JellyStat> j_statList = new List<JellyStat>();
 
+    private GameObject jellyObjectPool;
+
+    private void Start()
+    {
+        jellyObjectPool = GameObject.Find("ObjectPool");
+    }
+
     private void Awake()
     {
         buttonSpin.onClick.AddListener(() =>
@@ -23,12 +30,12 @@ public class Demo : MonoBehaviour
             GameManager.instance.UseGold(GameManager.instance.rouletteCost);
             if (GameManager.instance.canBuy)
             {
+                SoundManager.instance.Play("Ching", SoundManager.Sound.Effect);
                 roulette.Spin(EndOfSpin);
             }
             else
             {
-                ButtonCall.instance.ExitEventMethodByIndex(0);
-                buttonSpin.interactable = true;
+                SoundManager.instance.Play("Fail", SoundManager.Sound.Effect);
             }
         }
         );
@@ -37,7 +44,7 @@ public class Demo : MonoBehaviour
     }
 
     private void EndOfSpin(RoulettePieceData selectedData)
-    {
+    {       
         Debug.Log($"{selectedData.index} :{selectedData.description}");
 
         ButtonCall.instance.ExitEventMethodByIndex(0);
@@ -45,6 +52,8 @@ public class Demo : MonoBehaviour
         buttonSpin.interactable = true;
 
         GameObject makeJelly = Instantiate(jelly, new Vector3(0, 0, 0), Quaternion.identity);
+
+        makeJelly.transform.parent = jellyObjectPool.transform;
 
         j_stat = makeJelly.GetComponent<Jelly>().JellyStat;
 

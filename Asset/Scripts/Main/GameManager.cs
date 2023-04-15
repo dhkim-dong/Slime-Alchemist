@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 // UI 동기화
@@ -20,6 +21,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int startGold;
     [SerializeField] private int startJelatin;
     [SerializeField] GameObject gameOverPanel;
+    [SerializeField] public GameObject jellyObjectPool;
 
     public RuntimeAnimatorController[] LevelAc;
     public int[] jellyGoldList;
@@ -34,6 +36,7 @@ public class GameManager : MonoBehaviour
     public bool checkMission = false;
     public bool isSell;
     public bool canBuy;
+    public bool isRoulette;
     public GameObject selectJelly;
 
     public List<JellyStat> jellyList = new List<JellyStat>();
@@ -46,7 +49,6 @@ public class GameManager : MonoBehaviour
 
     public int rouletteCost;
     public int jellyJelatin;
-    
 
     private void Awake()
     {
@@ -121,6 +123,8 @@ public class GameManager : MonoBehaviour
 
     public void TimeFlow()
     {
+        if (isRoulette) return;
+
         TIMEVALUE -= Time.deltaTime;
         missionCheckTime += Time.deltaTime;
 
@@ -279,18 +283,74 @@ public class GameManager : MonoBehaviour
 
         if(gameData.Jelatin < missionList[missionNum])
         {
-            Time.timeScale = 0f;
-            gameOverPanel.SetActive(true);
-            // 게임오버
+            GameOver();
         }
         else
-        {           
-
+        {
+            SoundManager.instance.Play("Coin", SoundManager.Sound.Effect);
             jellyJelatin -= missionList[missionNum];
             missionNum++;
             missionJelatinText.text = string.Format("젤라틴 : " + "{0:#,###; -#,###;0}", missionList[missionNum]);
             checkMission = false;
         }
+    }
+
+    private void GameOver()
+    {
+        Time.timeScale = 0f;
+        gameOverPanel.SetActive(true);
+    }
+
+    public void GameReStart()
+    {
+        Time.timeScale = 1f;
+        gameOverPanel.SetActive(false);
+        ResetData();
+    }
+
+    private void ResetData()
+    {
+        StopAllCoroutines();
+
+        ButtonCall.instance.ExitEventMethodByIndex(0);
+        ButtonCall.instance.ExitEventMethodByIndex(3);
+
+        jellyList.Clear();
+
+        for (int i = 0; i < jellyObjectPool.transform.childCount; i++)
+        {
+            Transform jellys = jellyObjectPool.transform.GetChild(i);
+            Destroy(jellys.gameObject);
+        }
+
+        jellyBoolList.Clear();
+        jellyBool2List.Clear();
+
+        for (int i = 0; i < level1Groups.Length; i++)
+        {
+            level1Groups[i] = false;
+        }
+
+        for (int i = 0; i < level2Groups.Length; i++)
+        {
+            level2Groups[i] = false;
+        }
+
+        missionNum = 0;
+        missionCheckTime = 0;
+
+        if (ButtonCall.instance.isMission)
+        {
+            missionRemainTime.text = string.Format("남은시간 : " + "{0:D2}", (int)((float)missionTimeList[missionNum] - missionCheckTime));
+            missionJelatinText.text = string.Format("젤라틴 : " + "{0:#,###; -#,###;0}", missionList[missionNum]);
+        }
+
+        TIMEVALUE = 60 * 10;
+        rouletteCost = 150;
+        gameData.Jelatin = 10;
+        gameData.Gold = startGold;
+        gameData.Jelatin = startJelatin;
+        jellyJelatin = startJelatin;
     }
 
 #if UNITY_EDITOR

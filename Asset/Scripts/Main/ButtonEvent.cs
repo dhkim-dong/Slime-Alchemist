@@ -33,6 +33,10 @@ public class ButtonEvent : MonoBehaviour
         {
             buttonIndex = 2;
         }
+        else if(buttonName == "sound")
+        {
+            buttonIndex = 4;
+        }
         else
         {
 #if UNITY_EDITOR
@@ -42,7 +46,7 @@ public class ButtonEvent : MonoBehaviour
     }
 
     private void OnButtonClick()
-    {
+    {        
         ButtonCall.instance.PanelReset();
         CallButtonEvent();
     }
@@ -63,6 +67,9 @@ public class ButtonEvent : MonoBehaviour
             //case 3:
             //    ButtonCall.instance.ExitEventMethodByIndex(buttonIndex);
             //    break;
+            case 4:
+                ButtonCall.instance.CallEventMethodByIndex(buttonIndex);
+                break;
             default:
                 break;
         }

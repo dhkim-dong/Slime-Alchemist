@@ -182,7 +182,9 @@ public class Jelly : MonoBehaviour
 
     #region 젤라틴 생산
     private void MakeJellyJelatin()
-    {      
+    {
+        if (GameManager.instance.isRoulette) return;
+
         int makeJelatin = 0;
 
         makeJelatin = (int)(GameManager.instance.jelatinList[jellyStat.id] * Math.Pow(10, JellyStat.level - 1));
@@ -197,6 +199,7 @@ public class Jelly : MonoBehaviour
 
     void OnMouseDown()
     {
+        SoundManager.instance.Play("Grow", SoundManager.Sound.Effect);
         GameManager.instance.selectJelly = gameObject;
     }
 
@@ -232,6 +235,7 @@ public class Jelly : MonoBehaviour
             Destroy(GameManager.instance.selectJelly);
             GameManager.instance.GetGold(jellyStat);
             GameManager.instance.SearchDuplicate();
+            SoundManager.instance.Play("Sell", SoundManager.Sound.Effect);
         }
         // 젤리를 판매한다.( 골드를 얻는다) + 해당 오브젝트 파괴
     }

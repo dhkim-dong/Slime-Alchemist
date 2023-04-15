@@ -89,7 +89,7 @@ public class TestEditor : EditorWindow
 
         EditorGUILayout.BeginHorizontal();
 
-        EditorGUILayout.LabelField("젤리 레벨");
+        EditorGUILayout.LabelField("젤리 레벨 : 1부터 3까지 지정할 것");
 
         selectJellyLevel = EditorGUILayout.IntField(selectJellyLevel);
 
@@ -97,13 +97,13 @@ public class TestEditor : EditorWindow
 
         if (GUILayout.Button("젤리 생성"))
         {
-            ButtonCall.instance.CallEventMethodByIndex(1);
-
             if (selectJellyNum < 0) return;
             if (selectJellyNum > 11) return;
 
-            if (selectJellyLevel < 0) return;
+            if (selectJellyLevel <= 0) return;
             if (selectJellyLevel > 3) return;
+
+            ButtonCall.instance.CallEventMethodByIndex(1);
 
             UpgradePanelView.editJellyTarget(selectJellyNum,selectJellyLevel);
             UpgradePanelView.target();

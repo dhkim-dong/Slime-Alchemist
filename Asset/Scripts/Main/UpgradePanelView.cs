@@ -265,12 +265,13 @@ public class UpgradePanelView : MonoBehaviour
 
     // 리스트 제거하고 Act 적용 작업할 것
     // 두 메서드의 유사한 부분이 많으니 이 부분을 하나로 합칠 방법을 생각해보기
-    // 2023-03-25 작업예정
+    // 2023-04-16 작업예정
     public void GenerateSecondLevelJelly()
     {
         FindSameJelly(1);
 
-        GameObject makeJelly = Instantiate(jelly, new Vector3(0, 0, 0), Quaternion.identity);
+        GameObject makeJelly = Instantiate(jelly, new Vector3(0, 0, 0), Quaternion.identity);  // 젤리 생성 부분 많이 사용됨 -> 기능으로 묶어서 관리 필요
+        makeJelly.transform.parent = GameManager.instance.jellyObjectPool.transform; 
 
         jellyAC = makeJelly.GetComponent<Animator>();
 
@@ -295,6 +296,7 @@ public class UpgradePanelView : MonoBehaviour
         FindSameJelly(2);
 
         GameObject makeJelly = Instantiate(jelly, new Vector3(0, 0, 0), Quaternion.identity);
+        makeJelly.transform.parent = GameManager.instance.jellyObjectPool.transform;
 
         jellyAC = makeJelly.GetComponent<Animator>();
 
@@ -317,6 +319,7 @@ public class UpgradePanelView : MonoBehaviour
     private void TestJellyMake()
     {
         GameObject makeJelly = Instantiate(jelly, new Vector3(0, 0, 0), Quaternion.identity);
+        makeJelly.transform.parent = GameManager.instance.jellyObjectPool.transform;
 
         jellyAC = makeJelly.GetComponent<Animator>();
 

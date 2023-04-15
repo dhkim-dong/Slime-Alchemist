@@ -9,11 +9,12 @@ public class ButtonCall : MonoBehaviour
     [SerializeField] private GameObject makeJellyPanel;
     [SerializeField] private GameObject upgradeJellyPanel;
     [SerializeField] private GameObject[] missionPanel;
+    private GameObject soundPanel;
 
     public bool isMission;
     private void Start()
     {
-        instance= this;
+        instance = this;
     }
 
     public void PanelReset()
@@ -27,13 +28,16 @@ public class ButtonCall : MonoBehaviour
         switch (index)
         {
             case 0: makeJellyPanel.SetActive(true);
+                SoundManager.instance.Play("Button", SoundManager.Sound.Effect);
                 break;
             case 1:upgradeJellyPanel.SetActive(true);
+                SoundManager.instance.Play("Button", SoundManager.Sound.Effect);
                 break;
             case 2:
                 isMission = !isMission;
                 if (isMission)
                 {
+
                     for (int i = 0; i < missionPanel.Length; i++)
                         missionPanel[i].SetActive(true);
                
@@ -44,6 +48,8 @@ public class ButtonCall : MonoBehaviour
                     FadeController.instance.ImageFadeOut(missionPanel);
                 }
                 break;
+            case 4: SoundManager.instance.ControlSoundPanel();
+                break;
         }
     }
 
@@ -53,9 +59,11 @@ public class ButtonCall : MonoBehaviour
         {
             case 0:
                 makeJellyPanel.SetActive(false);
+                SoundManager.instance.Play("Pause Out", SoundManager.Sound.Effect);
                 break;
             case 3:
                 upgradeJellyPanel.SetActive(false);
+                SoundManager.instance.Play("Pause Out", SoundManager.Sound.Effect);
                 break;
         }
     }
